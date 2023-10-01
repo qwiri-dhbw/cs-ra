@@ -96,7 +96,7 @@ gehalten wird
 
 # Aufgabe 2 / Schaltwerke
 
-## Halbaddierer und Volladdierer
+## Addierer
 
 > (2015, 2016, 2019, 2020, 2020n, 2021, 2022) Zum Addieren von Zahlen lassen sich Halbaddierer und Volladdierer verwenden.
 > Erlaeutern Sie die Unterschiede zwischen einem Halb- und einem Volladdierer und gehen Sie dabei insbesondere auf Anzahl und Bedeutung der jeweiligen Ein- und Ausgaenge ein!
@@ -116,11 +116,76 @@ gehalten wird
 > (2021, 2022) Aus Halb- und/ oder Volladdierern lassen sich mehrstellige Addierer in zwei grundsaetzlich verschiedenen Bauarten zusammenbauen.
 > Skizzieren Sie den grundsaetzlichen Aufbau eines 4-bit-Addierers fuer eine der beiden Arten und erlaeutern Sie den Unterschied im Aufbau zwischen den beiden Arten!
 
-TODO
+**4-Bit-Ripple-Carry-Paralleladdierrer** (RC-PA):
+
+RC-PA ist mehrstelliger Addierer fuer Binaerzahlen. Bei vierstelliger Binaerzahlen (a3, a2, a1, a0 und b3, b2, b1, b0) ist Ergebnis (s4, s3, s2, s1, s0) - `c_in` vom naechsten VA ist `c_out` vom vorherigen VA. 5-Stellige Ausgabe (s4 ist UEberlauf)
+
+![](./assets/SCR-20231001-nfej.png)
+
+**4-Bit-Carry-Look-Ahead-Paralleladdierer** (CLA-PA):
+
+`c_in` Eingang wird nicht von vorausgehenden VA (oder HA) uebernommen, sondern durch "magisches CLA-Schaltnetz" nachberechnet. Fuer Berechnung von `C_in_i` muessen alle vorherigen Eingaenge `a_j`, `b_j`, `j < i` beruecksichtigt wrden. `c_in` wird im Vorraus berechnet -> besserer Zeitaufwand.
+
+![](./assets/SCR-20231001-nftf.png)
+
+**Serielladdierer**:
+
+Summanden werden nacheinander addiert, nur ein Volladdierer und mehrere Schieberegister benötigt. Schaltwerk, kein Schaltnetz.
+
+![](./assets/SCR-20231001-ngkw.png)
 
 > (2021, 2022) Die beiden Varianten aus Teilaufgabe b) unterscheiden sich insbesondere in Bezug auf ihren "Aufwand". Was kann Aufwand bedeuten? Erlaeutern Sie diesen Unterschied beim Aufwand der beiden Varianten eines n-bit-Addierers! Geben Sie an (mit Begruendung), wann Sie deshalb welche Variante des Addierers einsetzen wuerden!
 
+**Hardwareaufwand RC-PA**:
+* **HA**: 2 Tr. für `c_out` + 6 Tr. für `s` = 8 Transistoren
+* **VA**: 2 * HA + 2 Tr. für `c_out` = 18 Transistoren
+* **4-Bit RC-PA**: 
+  * 1 * _HA_ + (n - 1) * _VA_
+  * = 8 Tr. + (n - 1) * 18 Tr. 
+  * = 8 Tr. + (18n - 18) Tr. 
+  * = 18n - 10 Tr. 
+  * => O(n)
+HW Aufwand steigt linear mit Breite der Summanden. Gut, weil besseres (weniger Aufwand) ist kaum zu erwarten.
+
+**Zeitaufwand RC-PA**:
+* **Aufwand HA**: max. 2 Gatterlaufzeiten (GLZs)
+* **Aufwand VA**: max. 4 GLZs
+Die einzelnen `s_i` liegen nach unterschiedlicher Zeit an. `s_i` wird nach `(i + 2) * 2` GLZ erreicht. Das laengste `s_i` ist bein n-Bit-RC-PA `i = n - 1` => Zeitaufwand ist `2n` GLZ. Schlecht, zu erwarten waere O(1)! Beim Wechsel von `32-` auf `64-Bit`-CPI haette sich Taktfrequenz halbiert => kein 64-RC-PA in CPU verbaut.
+
+**RC-PA**:
+* Hardwareaufwand: 18n - 10
+* Zeitaufwand: 2n
+
+**CLA-PA**:
+* Hardwareaufwand: n * 4^n
+* Zeitaufwand: 4 GLZ
+
+Unterschied kommt dadurch zustande, dass RC-PA hintereinander laeuft, und CLA-PA nebeneinander.
+* RC-PA fuer embedded Systems (geringerer HW-Aufwand)
+* CLA-PA fuer CPUs (schneller)
+
 ---
+
+
+---
+
+> (2020, 2020n) b. Aus mehreren Halb- und Volladdierern lassen sich Paralleladdierer in zwei verschiedenen Bauarten zusammenbauen. Skizzieren Sie den grundsaetzlichen Aufbau eines 4-bit- Paralleladdierers und erlaeutern Sie den Unterschied im Aufbau zwischen den beiden Varianten!
+
+TODO
+
+> (2020, 2020n) c. Die beiden Varianten aus Teilaufgabe b) unterscheiden sich insbesondere in Bezug auf ihren "Aufwand". Was kann "Aufwand" bedeuten? Erlaeutern Sie diesen Unterschied beim Aufwand der beiden Varianten eines n-bit-Paralleladdierers! Geben Sie an (mit Begrundung), wann Sie deshalb welche Variante des Paralleladdierers einsetzen wurden!
+
+TODO
+
+---
+
+
+> (2015) Wieviele Halb- oder Volladdierer braucht man für einen 4-Bit Serielladdierer und welche weiteren Komponenten werden benötigt?
+
+TODO
+
+## Multiplizierer
+
 
 ---
 
@@ -138,17 +203,8 @@ TODO
 
 ---
 
----
 
-> (2020, 2020n) b. Aus mehreren Halb- und Volladdierern lassen sich Paralleladdierer in zwei verschiedenen Bauarten zusammenbauen. Skizzieren Sie den grundsaetzlichen Aufbau eines 4-bit- Paralleladdierers und erlaeutern Sie den Unterschied im Aufbau zwischen den beiden Varianten!
-
-TODO
-
-> (2020, 2020n) c. Die beiden Varianten aus Teilaufgabe b) unterscheiden sich insbesondere in Bezug auf ihren "Aufwand". Was kann "Aufwand" bedeuten? Erlaeutern Sie diesen Unterschied beim Aufwand der beiden Varianten eines n-bit-Paralleladdierers! Geben Sie an (mit Begrundung), wann Sie deshalb welche Variante des Paralleladdierers einsetzen wurden!
-
-TODO
-
----
+## Komparatoren
 
 > (2019) Komparatoren sind Bauelemente, welche beispielsweise in Rechenwerken oder im Cache benoetigt werden. Beschreiben Sie die Funktionalitaet eines Komparators und gehen Sie dabei insbesondere auf den Unterschied bezueglich der beiden genannten Einsatzfaelle Rechenwerk und Cache ein!
 
@@ -164,22 +220,6 @@ TODO
 
 ---
 
-> (2015) Skizzieren Sie einen 4-Bit-PA
-
-TODO
-
-> (2015) Skizzieren Sie einen 4-Bit-SA
-
-TODO
-
-> (2015) Bauen Sie aus mehreren Halb- und Vollbitaddierern einen 4-Bit Paralleladdierer. Machen Sie dazu eine Skizze. Wie viele Halb- und Volladdierer benötigt man dafür?
-
-TODO
-
-> (2015) Wieviele Halb- oder Volladdierer braucht man für einen 4-Bit Serielladdierer und welche weiteren Komponenten werden benötigt?
-
-TODO
-
 # Aufgabe 3 / Cache
 
 > (2015, 2016, 2020, 2020n, 2021, 2022) Was ist ein Cache? Welche Eigenschaften hat ein Cache? Und welche Eigenschaften sollte dieser zusätzlich noch haben? Erlaeutern Sie die Eigenschaften kurz!
@@ -187,7 +227,7 @@ TODO
 Temporärer, flüchtiger, schneller Zwischenspeicher, um auf Informationen aus dem Hauptspeicher schneller zugreifen zu können.
 
 **Eigenschaften des Cache**:
-* ~~flüchtig —> verlieren Inhalt, sobald Strom abgeschaltet wird~~
+* flüchtig —> verlieren Inhalt, sobald Strom abgeschaltet wird
 * kleiner als das zu cachende Medium (Hauptspeicher)
 * schneller als das zu cachende Medium (Hauptspeicher)
 * transparent —> es wird nicht auf den Cache, sondern auf das zu cachende Medium logisch zugegriffen (die CPU adressiert den Hauptspeicher und nicht den Cache)
@@ -216,7 +256,7 @@ TODO
 > (2015, 2016, 2019, 2020, 2021) Was versteht man bei einem Cache unter Verdrängung?
 > Wann und warum muss Verdrängung stattfinden?
 
-TODO
+Wenn eine HSS (Hauptspeicherseite) in den Cache geladen wird, muss eine andere HSS aus dem Cache verdrängt werden, wenn der Cache voll ist. Eine Kollision ist voraussetzung für eine Verdrängung. Mit einer Verdrängungsstrategie wird entschieden, welche HSS verdrängt wird.
 
 > (2016, 2019) Wo spielt Verdrängung bei obigem Zugriffsverlauf ("Hauptspeicher mit 256, ...") eine Rolle?
 
