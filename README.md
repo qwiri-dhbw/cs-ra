@@ -1,5 +1,12 @@
 # Cheat Sheet Hottest
 
+**Angugge**:
+
+- [ ] Komparatoren
+- [ ] "Rechnen" mit Cache
+- [ ] Serielladdierer
+- [ ]
+
 ## Addierer
 
 ### Halbaddierer
@@ -341,7 +348,7 @@ Schreibzugriff durch CPU findet im Hauptspeicher statt. Parallel dazu müssen Da
 | **Look-Through** | + gute klassische Kombination, physische Gegebenheit vorhanden um direktes Schreiben im Cache/Rückschreiben vom Cache in HS zu ermöglichen | - Kombination nicht möglich, da kein direkter Zugriff der CPU auf HS physische gegeben ist           |
 | **Look-Aside**   | - schlechte Kombination, da bei jedem Schreibzugriff der Bus zweimal belastet wird                                                         | + gute klassische Kombination, da Schreibzugriffe parallel im HS und Cache physisch gut machbar sind |
 
-> [!IMPORTANT]
+> [!NOTE] > [!IMPORTANT]
 > (2016, 2019) Ihr System besitzt einen Hauptspeicher mit 256 Speicherworten (linear adressiert beginnen mit der Adresse 0; eine Hauptspeicherseite umfasst 4 Worte) und benutzt einen Zwei-Wege-Assoziativ-Cache mit zwei mal acht Cachelines (4 Worte je Cacheline). Nacheinander wird auf die Hauptspeicheradressen (dezimal) 13, 42, 8, 15 und 73 zugegriffen.
 >
 > Erläutern Sie den Verlauf der Zugriffe und insbesondere, ob es sich bei dem jeweiligen Zugriff um einen Hit oder einen Miss handelt! Skizzieren Sie im folgenden Diagramm die Cachebelegung, nachdem diese Zugriffe stattgefunden haben und machen Sie deutlich, wo konkret die zugegriffenen Worte mit diesen Hauptspeicheradressen im Cache liegen!
@@ -350,7 +357,7 @@ Schreibzugriff durch CPU findet im Hauptspeicher statt. Parallel dazu müssen Da
 
 TODO
 
-> [!IMPORTANT]
+> [!NOTE] > [!IMPORTANT]
 > (2016, 2019) Wo spielt Verdrängung bei obigem Zugriffsverlauf ("Hauptspeicher mit 256, ...") eine Rolle?
 
 TODO
@@ -364,11 +371,47 @@ TODO
 Wenn eine HSS (Hauptspeicherseite) in den Cache geladen wird, muss eine andere HSS aus dem Cache verdrängt werden, wenn der Cache voll ist.
 Eine Kollision ist voraussetzung für eine Verdrängung. Mit einer Verdrängungsstrategie wird entschieden, welche HSS verdrängt wird.
 
-> [!NOTE] > [!IMPORTANT]
+> [!NOTE]
 > (2015m, 2016m, 2019m, 2020m, 2021) Erläutern Sie die Verdraengungsstrategien "zufaellig", "FIFO", "optimal", "LRU" und "LFU" deren Unterschied und geben Sie den Aufwand an!
 > Zu welchem Zweck werden diese Strategien tatsaechlich eingesetzt?
 
-TODO
+**Zufällig**:
+
+Eine zufällige HSS wird verdrängt.
+
+- **Aufwand**: Zufallszahlengenerator
+  - echter Zufall ist sehr teuer & aufwändig
+  - für Benchmarks reichen (meist) Pseudozufallszahlen aus
+- **Zweck**: (in Praxis selten verwendet) Benchmarking
+
+**FIFO** (First In First Out):
+
+Die HSS, welche am längsten im Cache ist, wird verdrängt.
+
+- **Aufwand**: Timestamp bei jeder Cache Line. Bei Verdrängung muss die Cache Line mit dem ältesten Timestamp gesucht werden. (sehr aufwändig!)
+- **Zweck**: Einfach zu implementieren, aber aktualität der Daten nicht berücksichtigt, daher nicht die beste Wahl
+
+**Optimale Strategie**:
+
+Es wird die HSS verdrängt, welche in der Zukunft gar nicht mehr oder am längsten nicht mehr benötigt wird.
+
+- **Aufwand**: "Blick in die Zukunft" bzw. "Kristallkugel" => ist nicht möglich.
+- **Zweck**: Realisierung für Benchmarking
+
+**LRU** (Least Recently Used):
+
+Die HSS, auf welche am längsten nicht mehr zugegriffen wurde, wird verdrängt.
+
+- **Aufwand**: Timestamp mit Update bei jedem Zugriff => Suche bei Verdrängung ist zu aufwändig!
+- **Zweck**: Relativ effektiv, aber Implementierung kann komplex sein
+
+**LFU** (Least Frequently Used):
+
+Die HSS, auf welche am wenigsten seltensten ("am wenigsten häufig") wurde, wird verdrängt.
+
+- **Aufwand**: Benutzungszähler, Einlagerungszähler
+- **Häufigkeit** = Zugriffe / Zeit => Bei Verdrängung aufwändige Berechnung und Suche
+- **Zweck**: Falls häufig verwendete Blöcke im HS gehalten werden sollen
 
 ---
 
