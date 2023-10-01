@@ -13,40 +13,43 @@
 ### 4-Bit-Ripple-Carry-Paralleladdierrer (RC-PA)
 
 **Hardwareaufwand**: Steigt linear mit Breite der Summanden (gut, weil besseres (weniger Aufwand) ist kaum zu erwarten)
-* **HA**: 2 Tr. für `c_out` + 6 Tr. für `s` = 8 Transistoren
-* **VA**: 2 * HA + 2 Tr. für `c_out` = 18 Transistoren
-* **n-bit**: 1 HA + (n - 1) VA = 8 Tr. + (n - 1) * 18 Tr.
 
-**Zeitaufwand**: 
-* **HA**: max. 2 Gatterlaufzeiten (GLZs)
-* **VA**: max. 4 GLZs
-* `s_i` liegen nach unterschiedlicher Zeit an. `s_i` wird nach `(i + 2) * 2` GLZ erreicht. Das laengste `s_i` ist bein n-Bit-RC-PA `i = n - 1` => Zeitaufwand ist `2n` GLZ. Schlecht, zu erwarten waere O(1)! Beim Wechsel von `32-` auf `64-Bit`-CPI haette sich Taktfrequenz halbiert => kein 64-RC-PA in CPU verbaut.
+- **HA**: 2 Tr. für `c_out` + 6 Tr. für `s` = 8 Transistoren
+- **VA**: 2 \* HA + 2 Tr. für `c_out` = 18 Transistoren
+- **n-bit**: 1 HA + (n - 1) VA = 8 Tr. + (n - 1) \* 18 Tr.
+
+**Zeitaufwand**:
+
+- **HA**: max. 2 Gatterlaufzeiten (GLZs)
+- **VA**: max. 4 GLZs
+- `s_i` liegen nach unterschiedlicher Zeit an. `s_i` wird nach `(i + 2) * 2` GLZ erreicht. Das laengste `s_i` ist bein n-Bit-RC-PA `i = n - 1` => Zeitaufwand ist `2n` GLZ. Schlecht, zu erwarten waere O(1)! Beim Wechsel von `32-` auf `64-Bit`-CPI haette sich Taktfrequenz halbiert => kein 64-RC-PA in CPU verbaut.
 
 ![](./assets/SCR-20231001-nfej.png)
 
 ### 4-Bit-Carry-Look-Ahead-Paralleladdierer (CLA-PA)
 
-`c_in` wird nicht von vorausgehenden VA (oder HA) uebernommen, sondern durch "magisches CLA-Schaltnetz" nachberechnet. 
-Fuer Berechnung von `C_in_i` muessen alle vorherigen Eingaenge `a_j`, `b_j`, `j < i` beruecksichtigt wrden. 
+`c_in` wird nicht von vorausgehenden VA (oder HA) uebernommen, sondern durch "magisches CLA-Schaltnetz" nachberechnet.
+Fuer Berechnung von `C_in_i` muessen alle vorherigen Eingaenge `a_j`, `b_j`, `j < i` beruecksichtigt wrden.
 `c_in` wird im Vorraus berechnet -> besserer Zeitaufwand.
 
 **Hardwareaufwand**:
-* Falls alle Vollkunjunktionen verwendet werden müssen: `2^*(2i) * 2i` Transistoren = `2i * 4^i` = `O(n^2 * 4^n)`
-* Hardwareaufwand steigt beim n-Bit-CLA-PA überexponentiell mit `n`.
-  * Beim Wechsel von 32- auf 64-Bit System wäre 16 Trillionen-fache Aufwand an Transistoren nötig gewesen.
-  * n = 4: 4^2 * 2^4 = 256 Tr.
-  * n = 8: 8^2 * 2^8 = 16384 Tr.
+
+- Falls alle Vollkunjunktionen verwendet werden müssen: `2^*(2i) * 2i` Transistoren = `2i * 4^i` = `O(n^2 * 4^n)`
+- Hardwareaufwand steigt beim n-Bit-CLA-PA überexponentiell mit `n`.
+  - Beim Wechsel von 32- auf 64-Bit System wäre 16 Trillionen-fache Aufwand an Transistoren nötig gewesen.
+  - n = 4: 4^2 \* 2^4 = 256 Tr.
+  - n = 8: 8^2 \* 2^8 = 16384 Tr.
 
 **Zeitaufwand**:
-* Es kann jeweils eine DNF, DMF oder jede andere DxF verwendet werden. Jeweils nur genau (max.) 2 GLZ.
-* Jedes s_i genau 6 GLZ (ausser s_0: 2 GLZ, s_1: 5 GLZ)
-* O(1)
+
+- Es kann jeweils eine DNF, DMF oder jede andere DxF verwendet werden. Jeweils nur genau (max.) 2 GLZ.
+- Jedes s_i genau 6 GLZ (ausser s_0: 2 GLZ, s_1: 5 GLZ)
+- O(1)
 
 > **Kombination**: 32-Bit Addierer wird in acht 4-Bit CLA-PAs gesplittet (hintereinander geschaltet nach RC-Prinzip). Damit ist das `n` der nicht-CLA-PA noch klein => erträglicher Hardwareaufwand.
 > ![](./assets/SCR-20231001-qjkd.png)
 
 ![](./assets/SCR-20231001-nftf.png)
-
 
 # Aufgabe 1 / Architekturen
 
@@ -148,21 +151,23 @@ gehalten wird
 
 ## Addierer
 
+> [!NOTE]
 > (2015, 2016, 2019, 2020, 2020n, 2021, 2022) Zum Addieren von Zahlen lassen sich Halbaddierer und Volladdierer verwenden.
 > Erlaeutern Sie die Unterschiede zwischen einem Halb- und einem Volladdierer und gehen Sie dabei insbesondere auf Anzahl und Bedeutung der jeweiligen Ein- und Ausgaenge ein!
 
-* **Halbaddierer**: Vollzieht die Addition von zwei einstelligen Binärzahlen a und b zu einer zweistelligen Binärzahl `c_out` und `s` (Übertrag und Summe).
-    * **Hardwareaufwand**: 8 Transistoren (Anzahl Eingänge)
+- **Halbaddierer**: Vollzieht die Addition von zwei einstelligen Binärzahlen a und b zu einer zweistelligen Binärzahl `c_out` und `s` (Übertrag und Summe).
+  - **Hardwareaufwand**: 8 Transistoren (Anzahl Eingänge)
 
 ![](./assets/SCR-20231001-bvci.png)
 
-* **Volladdierer**: Vollzieht die Addition von drei einstelligen Binärzahlen a, b und (Übertrag vorher) zu einer zweistelligen Binärzahl `c_out` und `s` (Übertrag und Summe).
-    * **Hardwareaufwand**: 2 * HA + 2 = 18 Transistoren
+- **Volladdierer**: Vollzieht die Addition von drei einstelligen Binärzahlen a, b und (Übertrag vorher) zu einer zweistelligen Binärzahl `c_out` und `s` (Übertrag und Summe).
+  - **Hardwareaufwand**: 2 \* HA + 2 = 18 Transistoren
 
 ![](./assets/SCR-20231001-bvjo.png)
 
 ---
 
+> [!NOTE]
 > (2020, 2021, 2022) Aus Halb- und/ oder Volladdierern lassen sich mehrstellige Addierer in zwei grundsaetzlich verschiedenen Bauarten zusammenbauen.
 > Skizzieren Sie den grundsaetzlichen Aufbau eines 4-bit-Addierers fuer eine der beiden Arten und erlaeutern Sie den Unterschied im Aufbau zwischen den beiden Arten!
 
@@ -186,53 +191,52 @@ Summanden werden nacheinander addiert, nur ein Volladdierer und mehrere Schieber
 
 ![](./assets/SCR-20231001-ngkw.png)
 
-> (2020, 2021, 2022) Die beiden Varianten aus Teilaufgabe b) unterscheiden sich insbesondere in Bezug auf ihren "Aufwand". 
-> Was kann Aufwand bedeuten? Erlaeutern Sie diesen Unterschied beim Aufwand der beiden Varianten eines n-bit-Addierers! 
+> [!NOTE]
+> (2020, 2021, 2022) Die beiden Varianten aus Teilaufgabe _`b)`_ unterscheiden sich insbesondere in Bezug auf ihren "Aufwand".
+> Was kann Aufwand bedeuten? Erlaeutern Sie diesen Unterschied beim Aufwand der beiden Varianten eines n-bit-Addierers!
 > Geben Sie an (mit Begruendung), wann Sie deshalb welche Variante des Addierers einsetzen wuerden!
 
 **Hardwareaufwand RC-PA**:
-* **HA**: 2 Tr. für `c_out` + 6 Tr. für `s` = 8 Transistoren
-* **VA**: 2 * HA + 2 Tr. für `c_out` = 18 Transistoren
-* **4-Bit RC-PA**: 
-  * 1 * _HA_ + (n - 1) * _VA_
-  * = 8 Tr. + (n - 1) * 18 Tr. 
-  * = 8 Tr. + (18n - 18) Tr. 
-  * = 18n - 10 Tr. 
-  * => O(n)
-HW Aufwand steigt linear mit Breite der Summanden. Gut, weil besseres (weniger Aufwand) ist kaum zu erwarten.
+
+- **HA**: 2 Tr. für `c_out` + 6 Tr. für `s` = 8 Transistoren
+- **VA**: 2 \* HA + 2 Tr. für `c_out` = 18 Transistoren
+- **4-Bit RC-PA**:
+  - 1 _ *HA* + (n - 1) _ _VA_
+  - = 8 Tr. + (n - 1) \* 18 Tr.
+  - = 8 Tr. + (18n - 18) Tr.
+  - = 18n - 10 Tr.
+  - => O(n)
+    HW Aufwand steigt linear mit Breite der Summanden. Gut, weil besseres (weniger Aufwand) ist kaum zu erwarten.
 
 **Zeitaufwand RC-PA**:
-* **Aufwand HA**: max. 2 Gatterlaufzeiten (GLZs)
-* **Aufwand VA**: max. 4 GLZs
-Die einzelnen `s_i` liegen nach unterschiedlicher Zeit an. `s_i` wird nach `(i + 2) * 2` GLZ erreicht. Das laengste `s_i` ist bein n-Bit-RC-PA `i = n - 1` => Zeitaufwand ist `2n` GLZ. Schlecht, zu erwarten waere O(1)! Beim Wechsel von `32-` auf `64-Bit`-CPI haette sich Taktfrequenz halbiert => kein 64-RC-PA in CPU verbaut.
+
+- **Aufwand HA**: max. 2 Gatterlaufzeiten (GLZs)
+- **Aufwand VA**: max. 4 GLZs
+  Die einzelnen `s_i` liegen nach unterschiedlicher Zeit an. `s_i` wird nach `(i + 2) * 2` GLZ erreicht. Das laengste `s_i` ist bein n-Bit-RC-PA `i = n - 1` => Zeitaufwand ist `2n` GLZ. Schlecht, zu erwarten waere O(1)! Beim Wechsel von `32-` auf `64-Bit`-CPI haette sich Taktfrequenz halbiert => kein 64-RC-PA in CPU verbaut.
 
 **RC-PA**:
-* Hardwareaufwand: 18n - 10
-* Zeitaufwand: 2n
+
+- Hardwareaufwand: 18n - 10
+- Zeitaufwand: 2n
 
 **CLA-PA**:
-* Hardwareaufwand: n * 4^n
-* Zeitaufwand: 4 GLZ
+
+- Hardwareaufwand: n \* 4^n
+- Zeitaufwand: 4 GLZ
 
 Unterschied kommt dadurch zustande, dass RC-PA hintereinander laeuft, und CLA-PA nebeneinander.
-* **RC-PA fuer embedded Systems (geringerer HW-Aufwand)**
-* **CLA-PA fuer CPUs (schneller)**
+
+- **RC-PA fuer embedded Systems (geringerer HW-Aufwand)**
+- **CLA-PA fuer CPUs (schneller)**
 
 ---
 
 > [!IMPORTANT]
 > (2015) Wieviele Halb- oder Volladdierer braucht man für einen `n`-Bit Serielladdierer und welche weiteren Komponenten werden benötigt?
 
-* 1 VA
-* `n` UND-Gatter
-* 2 Schieberegister
-* 1 Taktgeber
-* `2 * n` D-FlipFlops
-
 TODO
 
 ## Multiplizierer
-
 
 ---
 
@@ -252,13 +256,14 @@ TODO
 
 ---
 
-
 ## Komparatoren
 
-> [!IMPORTANT]
-> (2019) Komparatoren sind Bauelemente, welche beispielsweise in Rechenwerken oder im Cache benoetigt werden. Beschreiben Sie die Funktionalitaet eines Komparators und gehen Sie dabei insbesondere auf den Unterschied bezueglich der beiden genannten Einsatzfaelle Rechenwerk und Cache ein!
+> (2019) Komparatoren sind Bauelemente, welche beispielsweise in Rechenwerken oder im Cache benoetigt werden.
+> Beschreiben Sie die Funktionalitaet eines Komparators und gehen Sie dabei insbesondere auf den Unterschied bezueglich der beiden genannten Einsatzfaelle Rechenwerk und Cache ein!
 
-TODO
+Ein Komparator vergleicht zwei binäre Zahlen von links nach rechts.
+Für das Rechenwerk ist es wichtig, welche der Zahlen größer ist (bzw. ob die Zahlen gleich sind) und der Cache muss nur wissen,
+ob die Zahlen gleich sind (Adresse eines gesuchten Datenblocks mit den im Cache gespeicherten Adressen zu vergleichen).
 
 ---
 
@@ -269,32 +274,72 @@ TODO
 > [!IMPORTANT]
 > (2019) c. Beschreiben Sie den Aufwand des Komparators aus Teilaufgabe b) in Abhaengigkeit der Stellenanzahl!
 
+TODO
+
 ---
 
 # Aufgabe 3 / Cache
 
+> [!NOTE]
 > (2015, 2016, 2020, 2020n, 2021, 2022) Was ist ein Cache? Welche Eigenschaften hat ein Cache? Und welche Eigenschaften sollte dieser zusätzlich noch haben? Erlaeutern Sie die Eigenschaften kurz!
 
 Temporärer, flüchtiger, schneller Zwischenspeicher, um auf Informationen aus dem Hauptspeicher schneller zugreifen zu können.
 
 **Eigenschaften des Cache**:
-* flüchtig —> verlieren Inhalt, sobald Strom abgeschaltet wird
-* kleiner als das zu cachende Medium (Hauptspeicher)
-* schneller als das zu cachende Medium (Hauptspeicher)
-* transparent —> es wird nicht auf den Cache, sondern auf das zu cachende Medium logisch zugegriffen (die CPU adressiert den Hauptspeicher und nicht den Cache)
-* konsistent —> alle Instanzen derselben Hauptspeicheradresse (HSA) haben denselben Wert
-* kohärent —> beim Zugriff auf eine HSA wird immer der aktuelle Wert geliefert
 
-> [!IMPORTANT]
+- flüchtig —> verlieren Inhalt, sobald Strom abgeschaltet wird
+- kleiner als das zu cachende Medium (Hauptspeicher)
+- schneller als das zu cachende Medium (Hauptspeicher)
+- transparent —> es wird nicht auf den Cache, sondern auf das zu cachende Medium logisch zugegriffen (die CPU adressiert den Hauptspeicher und nicht den Cache)
+- konsistent —> alle Instanzen derselben Hauptspeicheradresse (HSA) haben denselben Wert
+- kohärent —> beim Zugriff auf eine HSA wird immer der aktuelle Wert geliefert
+
 > (2016) Ein Cache kann entsprechend der Look-Aside- sowie der Look-Through-Architektur aufgebaut sein und mit der Write-Back- sowie der Write-Through-Strategie arbeiten.
 > Erläutern Sie die vier Begriffe "Look-Aside-Architektur", "Look-Through-Architektur", "Write-Back-Strategie", "Write-Through-Strategie" sowie deren jeweilige Vor- und Nachteile!
 
-TODO
+**Look-Through**:
 
-> [!IMPORTANT]
+CPU nur mit Cache verbunden. CPU greift über Cache auf Hauptspeicher zu.
+
+![](./assets/SCR-20231001-sycl.png)
+
+| Vorteil             | Nachteil                                    |
+| ------------------- | ------------------------------------------- |
+| optimale Konsistenz | Zugriffszeit bei Miss größer als ohne Cache |
+
+**Look-Aside**:
+
+CPU, Cache und HS über einen Bus verbunden. Anfrage durch CPU geht per Bus an beide und ggf. antworten beide, d. h. die schnellere Antwort gewinnt.
+
+![](./assets/SCR-20231001-sygf.png)
+
+| Vorteil                                                                         | Nachteil                                                                  |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Zugriffszeit bei einem Miss genauso wie ohne Cache (immer "beste" Zugriffszeit) | Bus braucht Zugriffsprotokoll mit Overhead (langsamer als 1:1 Verbindung) |
+|                                                                                 | Konsistenz durch zweite Antwort potentiell gefährdet                      |
+
+**Write-Back**:
+
+Schreibzugriff durch CPU findet im Cache statt und Cache aktualisiert Daten bei nächster Gelegenheit im Hauptspeicher.
+
+| Vorteil                                    | Nachteil                           |
+| ------------------------------------------ | ---------------------------------- |
+| Schreiben in Cache-Geschwindigkeit möglich | zeitwertige Inkonsistenz der Daten |
+
+**Write-Through**:
+
+Schreibzugriff durch CPU findet im Hauptspeicher statt. Parallel dazu müssen Daten im Cache invalidiert (schlecht) oder geschrieben werden (gut).
+
+| Vorteil                       | Nachteil                                    |
+| ----------------------------- | ------------------------------------------- |
+| Optimale Konsistenz der Daten | Schreiben nur in HS-Geschwindigkeit möglich |
+
 > (2016) Welche der Cache-Architekturen und Schreibstrategien lassen sich gut und welche weniger gut kombinieren? Begründen Sie Ihre Antwort!
 
-TODO
+| Strategie        | Write-Back                                                                                                                                 | Write-Through                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| **Look-Through** | + gute klassische Kombination, physische Gegebenheit vorhanden um direktes Schreiben im Cache/Rückschreiben vom Cache in HS zu ermöglichen | - Kombination nicht möglich, da kein direkter Zugriff der CPU auf HS physische gegeben ist           |
+| **Look-Aside**   | - schlechte Kombination, da bei jedem Schreibzugriff der Bus zweimal belastet wird                                                         | + gute klassische Kombination, da Schreibzugriffe parallel im HS und Cache physisch gut machbar sind |
 
 > [!IMPORTANT]
 > (2016, 2019) Ihr System besitzt einen Hauptspeicher mit 256 Speicherworten (linear adressiert beginnen mit der Adresse 0; eine Hauptspeicherseite umfasst 4 Worte) und benutzt einen Zwei-Wege-Assoziativ-Cache mit zwei mal acht Cachelines (4 Worte je Cacheline). Nacheinander wird auf die Hauptspeicheradressen (dezimal) 13, 42, 8, 15 und 73 zugegriffen.
@@ -305,20 +350,21 @@ TODO
 
 TODO
 
+> [!IMPORTANT]
+> (2016, 2019) Wo spielt Verdrängung bei obigem Zugriffsverlauf ("Hauptspeicher mit 256, ...") eine Rolle?
+
+TODO
+
 ---
 
+> [!NOTE]
 > (2015, 2016, 2019, 2020, 2021) Was versteht man bei einem Cache unter Verdrängung?
 > Wann und warum muss Verdrängung stattfinden?
 
 Wenn eine HSS (Hauptspeicherseite) in den Cache geladen wird, muss eine andere HSS aus dem Cache verdrängt werden, wenn der Cache voll ist.
 Eine Kollision ist voraussetzung für eine Verdrängung. Mit einer Verdrängungsstrategie wird entschieden, welche HSS verdrängt wird.
 
-> [!IMPORTANT]
-> (2016, 2019) Wo spielt Verdrängung bei obigem Zugriffsverlauf ("Hauptspeicher mit 256, ...") eine Rolle?
-
-TODO
-
-> [!IMPORTANT]
+> [!NOTE] > [!IMPORTANT]
 > (2015m, 2016m, 2019m, 2020m, 2021) Erläutern Sie die Verdraengungsstrategien "zufaellig", "FIFO", "optimal", "LRU" und "LFU" deren Unterschied und geben Sie den Aufwand an!
 > Zu welchem Zweck werden diese Strategien tatsaechlich eingesetzt?
 
@@ -326,40 +372,78 @@ TODO
 
 ---
 
-> [!IMPORTANT]
 > (2015) Welches sind die beiden Speichertypen für RAM Speicher? Welche FlipFlops / Speichermethoden werden verwendet? Beschreiben Sie jeweils die Funktionsweise!
 
-TODO
+**DRAM (Dynamic RAM)**:
+
+Speichert Daten in Kondensatoren.
+Erfordert periodische Aktualisierung (Refresh).
+Langsamerer Zugriff, aber höhere Speicherdichte.
+Häufiger in Haupt- und Arbeitsspeichern.
+
+**SRAM (Static RAM)**:
+
+Verwendet Flip-Flops zur Datenspeicherung.
+Keine periodische Aktualisierung erforderlich.
+Schnellerer Zugriff, aber teurer und stromhungriger.
+Häufiger in Cache-Speichern.
 
 ---
 
+> [!NOTE]
 > (2015, 2020, 2020n, 2021, 2022) Der Speicher ist logisch linear aber physikalisch als Matrix organisiert. Was bedeutet das? (Was sind die Vorteile? | Nennen Sie die Gruende fuer diese Matrix-Organisation!)
 
 **Eine matrixförmige Speicherorganisation**: zweidimensionale Anordnung der Speicherwerte in Zeilen und Spalten.
 
 **Gründe**:
-* weniger Aufwand für Adressdecodierung 
-* Einlesen einer ganzen Hauptspeicherseite (HSS) (=Matrixzeile) in den Cache
-* zeilenweiser Refresh des HS (wortweiser Refresh-Zyklus dauert viel zu lange)
 
-> [!IMPORTANT]
-> (2020, 2020n, 2021, 2022) Decoder und Multiplexer sind zwei wichtige und im Aufbau sehr aehnliche Bauteile zur Realisierung der Matrix-Organisation. Beschreiben Sie die Funktionalitaet der beiden Bauteile Decoder und Multiplexer, und zeichnen Sie das Schaltbild eines 4:1- Multiplexers, welchen Sie mit Hilfe des entsprechenden Decoders realisieren koennen! Warum wird bei der Matrix-Organisation einer der beiden Decoder durch einen Multiplexer ersetzt?
+- weniger Aufwand für Adressdecodierung
+- Einlesen einer ganzen Hauptspeicherseite (HSS) (=Matrixzeile) in den Cache
+- zeilenweiser Refresh des HS (wortweiser Refresh-Zyklus dauert viel zu lange)
 
-TODO
+> [!NOTE]
+> (2020, 2020n, 2021, 2022) Decoder und Multiplexer sind zwei wichtige und im Aufbau sehr aehnliche Bauteile zur Realisierung der Matrix-Organisation.
+> Beschreiben Sie die Funktionalitaet der beiden Bauteile Decoder und Multiplexer, und zeichnen Sie das Schaltbild eines 4:1- Multiplexers, welchen Sie mit Hilfe des entsprechenden Decoders realisieren koennen!
+> Warum wird bei der Matrix-Organisation einer der beiden Decoder durch einen Multiplexer ersetzt?
+
+Ein **Decoder** ist ein Bauteil für Schaltungen, welches über die Eingänge einen binärcodierten Ausgang aktiviert.
+Ein Decoder mit n Eingängen kann maximal 2^n Ausgänge ansteuern.
+Der Decoder wählt eine der Ausgangsleitungen basierend auf dem Binärwert an den Eingangsleitungen aus.
+Alle anderen Ausgangsleitungen sind deaktiviert
+
+Ein **Multiplexer** (Mux) ist ein Bauteil für Schaltungen, welches über 2^n Dateneingänge, n Steuereingänge und genau 1 Ausgang verfügt.
+Dabei wird der jeweilige Wert des Eingangs an den Ausgang weitergeleitet, welcher gerade durch den binärcodierten Wert über Steuereingänge aktiv geschaltet ist.
+
+![](./assets/SCR-20231001-rdnd.png)
 
 ---
 
-> [!IMPORTANT]
 > (2015) Neben dem RAM Speicher gibt es auch ROM Speicher. Beschreiben Sie die einzelnen Arten usw.
 
-TODO
+**RAM (Random Access Memory)**:
+
+DRAM (Dynamic RAM) für schnellen und kostengünstigen temporären Speicher.
+SRAM (Static RAM) für noch schnelleren, aber teureren Cache-Speicher.
+DDR-RAM mit verschiedenen Generationen für höhere Datentransferraten.
+
+**ROM (Read-Only Memory)**:
+
+Maskenprogrammierbares ROM (Mask ROM) für unveränderliche Werksdaten.
+PROM (Programmable ROM) für einmalige Programmierung.
+EPROM (Erasable Programmable ROM) mit UV-Löschung.
+EEPROM (Electrically Erasable Programmable ROM) mit elektrischer Löschung.
+Flash-Speicher für wiederholte Programmierung, in SSDs und Speicherkarten.
 
 ---
 
-> [!IMPORTANT]
+> [!NOTE] > [!IMPORTANT]
 > (2015, 2020, 2020n, 2021) Erläutern Sie den Unterschied zwischen den drei Arten (Direct Mapped, Vollassoziativ, N-Weg Assoziativ).
 > Inwiefern hat die Unterscheidung der drei Arten mit den in der Aufgabe oben drüber genannten Prinzip der Verdrängung zu tun (zufaellig, optimal, LRU und LFU, ...)
 
 TODO
 
 ---
+
+# Other
+
+![](./assets/SCR-20231001-swqj.png)
