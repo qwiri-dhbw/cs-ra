@@ -3,9 +3,7 @@
 **Angugge**:
 
 - [ ] Komparatoren
-- [ ] "Rechnen" mit Cache
 - [ ] Serielladdierer
-- [ ]
 
 ## Addierer
 
@@ -203,63 +201,51 @@ Summanden werden nacheinander addiert, nur ein Volladdierer und mehrere Schieber
 > Was kann Aufwand bedeuten? Erlaeutern Sie diesen Unterschied beim Aufwand der beiden Varianten eines n-bit-Addierers!
 > Geben Sie an (mit Begruendung), wann Sie deshalb welche Variante des Addierers einsetzen wuerden!
 
-**Hardwareaufwand RC-PA**:
-
-- **HA**: 2 Tr. für `c_out` + 6 Tr. für `s` = 8 Transistoren
-- **VA**: 2 \* HA + 2 Tr. für `c_out` = 18 Transistoren
-- **4-Bit RC-PA**:
-  - 1 _ *HA* + (n - 1) _ _VA_
-  - = 8 Tr. + (n - 1) \* 18 Tr.
-  - = 8 Tr. + (18n - 18) Tr.
-  - = 18n - 10 Tr.
-  - => O(n)
-    HW Aufwand steigt linear mit Breite der Summanden. Gut, weil besseres (weniger Aufwand) ist kaum zu erwarten.
-
-**Zeitaufwand RC-PA**:
-
-- **Aufwand HA**: max. 2 Gatterlaufzeiten (GLZs)
-- **Aufwand VA**: max. 4 GLZs
-  Die einzelnen `s_i` liegen nach unterschiedlicher Zeit an. `s_i` wird nach `(i + 2) * 2` GLZ erreicht. Das laengste `s_i` ist bein n-Bit-RC-PA `i = n - 1` => Zeitaufwand ist `2n` GLZ. Schlecht, zu erwarten waere O(1)! Beim Wechsel von `32-` auf `64-Bit`-CPI haette sich Taktfrequenz halbiert => kein 64-RC-PA in CPU verbaut.
-
 **RC-PA**:
 
 - Hardwareaufwand: 18n - 10
-- Zeitaufwand: 2n
+- Zeitaufwand: 2n GLZ
 
 **CLA-PA**:
 
 - Hardwareaufwand: n \* 4^n
 - Zeitaufwand: 4 GLZ
 
-Unterschied kommt dadurch zustande, dass RC-PA hintereinander laeuft, und CLA-PA nebeneinander.
-
+- Unterschied kommt dadurch zustande, dass RC-PA hintereinander laeuft, und CLA-PA nebeneinander.
 - **RC-PA fuer embedded Systems (geringerer HW-Aufwand)**
 - **CLA-PA fuer CPUs (schneller)**
 
 ---
 
-> [!IMPORTANT]
 > (2015) Wieviele Halb- oder Volladdierer braucht man für einen `n`-Bit Serielladdierer und welche weiteren Komponenten werden benötigt?
 
-TODO
+- 1x VA
+- 2x D-FF
+- 3x n-Bit-SR
+- Taktgeber
 
 ## Multiplizierer
 
 ---
 
-> (2016) Mithilfe von einem oder mehreren Paralleladdierern (für mehrstellige Dualzahlen) sowie eventuellen anderen Bauteilen lässt sich ein Multiplizierer aufbauen.
-
-> [!IMPORTANT]
-> (2016) Welche Bauteile (Spezifikation und jeweilige Stückzahl) sind notwendig, wenn zwei 4-Bit-Zahlen multipliziert werden sollen?
+> (2016, 2019) Mithilfe von einem oder mehreren Paralleladdierern (für mehrstellige Dualzahlen) sowie eventuellen anderen Bauteilen lässt sich ein Multiplizierer aufbauen.
+> Welche Varianten gibt es? Welche Bauteile (Spezifikation und jeweilige Stückzahl) sind notwendig, wenn zwei 4-Bit-Zahlen multipliziert werden sollen?
 > Skizzieren Sie den entsprechenden Multiplizierer!
 
-TODO
+**Multiplikation mit Paralleladdierer**:
 
-> [!IMPORTANT]
-> (2019) Welche Varianten gibt es? Welche Bauteile (Spezifikation und jeweilige Stueckzahl) sind fuer eine selbstzuwaehlende dieser Varianten notwendig, wenn zwei 4-Bit Zahlen multipliziert werden sollen?
-> Skizzieren Sie den entsprechenden Multiplizierer!
+![](./assets/SCR-20231003-tbrc.png)
 
-TODO
+- 16 UND-Gatter und 3 4-Bit Paralleladdierer
+
+**Multiplikation mit Seriellmultiplizierer**:
+
+![](./assets/SCR-20231003-tdbr.png)
+
+- Motivation: Engere Anlehnung an schriftliche Multiplikationsverfahren
+- Einsatz grundsätzlich sinnvoll, wenn HW-Aufwand eingespart werden soll
+  - Weitere HW-Einsparung möglich, falls Faktor seriell ankommt oder Ergebnis seriell ausgegeben werden soll
+- 5 UND-Gatter, 2 Schieberegister, 1 Taktgeber, 10 D-FF
 
 ---
 
@@ -278,10 +264,13 @@ ob die Zahlen gleich sind (Adresse eines gesuchten Datenblocks mit den im Cache 
 
 ![](./assets/SCR-20231001-bwoj.png)
 
-> [!IMPORTANT]
 > (2019) c. Beschreiben Sie den Aufwand des Komparators aus Teilaufgabe b) in Abhaengigkeit der Stellenanzahl!
 
-TODO
+**HW-Aufwand eines kaskadierbaren 1-Bit-Komparator**:
+
+- HW: 18 Tr. -> (Allgemein: 18\*n Tr.)
+- Zeit: 2 GLZ -> (Allgemein: 2\*n GLZ)
+- Linearer Zeitaufwand
 
 ---
 
@@ -348,19 +337,30 @@ Schreibzugriff durch CPU findet im Hauptspeicher statt. Parallel dazu müssen Da
 | **Look-Through** | + gute klassische Kombination, physische Gegebenheit vorhanden um direktes Schreiben im Cache/Rückschreiben vom Cache in HS zu ermöglichen | - Kombination nicht möglich, da kein direkter Zugriff der CPU auf HS physische gegeben ist           |
 | **Look-Aside**   | - schlechte Kombination, da bei jedem Schreibzugriff der Bus zweimal belastet wird                                                         | + gute klassische Kombination, da Schreibzugriffe parallel im HS und Cache physisch gut machbar sind |
 
-> [!NOTE] > [!IMPORTANT]
-> (2016, 2019) Ihr System besitzt einen Hauptspeicher mit 256 Speicherworten (linear adressiert beginnen mit der Adresse 0; eine Hauptspeicherseite umfasst 4 Worte) und benutzt einen Zwei-Wege-Assoziativ-Cache mit zwei mal acht Cachelines (4 Worte je Cacheline). Nacheinander wird auf die Hauptspeicheradressen (dezimal) 13, 42, 8, 15 und 73 zugegriffen.
+> [!NOTE]
+> (2016, 2019) Ihr System besitzt einen Hauptspeicher mit 256 Speicherworten (linear adressiert beginnen mit der Adresse 0; eine Hauptspeicherseite umfasst 4 Worte)
+> und benutzt einen Zwei-Wege-Assoziativ-Cache mit zwei mal acht Cachelines (4 Worte je Cacheline).
+> Nacheinander wird auf die Hauptspeicheradressen (dezimal) 13, 42, 8, 15 und 73 zugegriffen.
 >
-> Erläutern Sie den Verlauf der Zugriffe und insbesondere, ob es sich bei dem jeweiligen Zugriff um einen Hit oder einen Miss handelt! Skizzieren Sie im folgenden Diagramm die Cachebelegung, nachdem diese Zugriffe stattgefunden haben und machen Sie deutlich, wo konkret die zugegriffenen Worte mit diesen Hauptspeicheradressen im Cache liegen!
+> Erläutern Sie den Verlauf der Zugriffe und insbesondere, ob es sich bei dem jeweiligen Zugriff um einen Hit oder einen Miss handelt!
+> Skizzieren Sie im folgenden Diagramm die Cachebelegung, nachdem diese Zugriffe stattgefunden haben und machen Sie deutlich,
+> wo konkret die zugegriffenen Worte mit diesen Hauptspeicheradressen im Cache liegen!
 >
 > ![](./assets/Screenshot%202023-09-30%20224827.png)
 
-TODO
+- "zwei mal **acht** Cachelines" => 2^3 = 8 => 3 Bit für Cache-Index
+- "Hauptspeicherseite umfasst 4 Worte" => 2^2 = 4 => 2 Bit für Wort-Offset
+- Rest ist Tag
+- [000][010][10] => Tag `000`, CL `010`, Pos `10`
 
-> [!NOTE] > [!IMPORTANT]
+![](./assets/IMG_02909733CFA7-1.jpeg)
+
+> [!NOTE]
 > (2016, 2019) Wo spielt Verdrängung bei obigem Zugriffsverlauf ("Hauptspeicher mit 256, ...") eine Rolle?
 
-TODO
+Wenn eine HSS in den Cache eingelagert werden soll, muss eine andere aus dem Cache entfernt werden. Eine Kollision ist Voraussetzung für Verdrängung.
+Mit einer Verdrängungsstrategie wird darüber entschieden, welche der möglichen HSS verdrängt wird.
+z. B. bei `75` (dec) muss eine Verdrängung stattfinden, da ...
 
 ---
 
@@ -372,7 +372,7 @@ Wenn eine HSS (Hauptspeicherseite) in den Cache geladen wird, muss eine andere H
 Eine Kollision ist voraussetzung für eine Verdrängung. Mit einer Verdrängungsstrategie wird entschieden, welche HSS verdrängt wird.
 
 > [!NOTE]
-> (2015m, 2016m, 2019m, 2020m, 2021) Erläutern Sie die Verdraengungsstrategien "zufaellig", "FIFO", "optimal", "LRU" und "LFU" deren Unterschied und geben Sie den Aufwand an!
+> (2015m, 2016m, 2019m, 2020m, 2021m) Erläutern Sie die Verdraengungsstrategien "zufaellig", "FIFO", "optimal", "LRU" und "LFU" deren Unterschied und geben Sie den Aufwand an!
 > Zu welchem Zweck werden diese Strategien tatsaechlich eingesetzt?
 
 **Zufällig**:
@@ -465,17 +465,17 @@ Dabei wird der jeweilige Wert des Eingangs an den Ausgang weitergeleitet, welche
 
 **RAM (Random Access Memory)**:
 
-DRAM (Dynamic RAM) für schnellen und kostengünstigen temporären Speicher.
-SRAM (Static RAM) für noch schnelleren, aber teureren Cache-Speicher.
-DDR-RAM mit verschiedenen Generationen für höhere Datentransferraten.
+- DRAM (Dynamic RAM) für schnellen und kostengünstigen temporären Speicher.
+- SRAM (Static RAM) für noch schnelleren, aber teureren Cache-Speicher.
+- DDR-RAM mit verschiedenen Generationen für höhere Datentransferraten.
 
 **ROM (Read-Only Memory)**:
 
-Maskenprogrammierbares ROM (Mask ROM) für unveränderliche Werksdaten.
-PROM (Programmable ROM) für einmalige Programmierung.
-EPROM (Erasable Programmable ROM) mit UV-Löschung.
-EEPROM (Electrically Erasable Programmable ROM) mit elektrischer Löschung.
-Flash-Speicher für wiederholte Programmierung, in SSDs und Speicherkarten.
+- Maskenprogrammierbares ROM (Mask ROM) für unveränderliche Werksdaten.
+- PROM (Programmable ROM) für einmalige Programmierung.
+- EPROM (Erasable Programmable ROM) mit UV-Löschung.
+- EEPROM (Electrically Erasable Programmable ROM) mit elektrischer Löschung.
+- Flash-Speicher für wiederholte Programmierung, in SSDs und Speicherkarten.
 
 ---
 
