@@ -75,9 +75,10 @@ Fuer Berechnung von `C_in_i` muessen alle vorherigen Eingaenge `a_j`, `b_j`, `j 
 
 - **Rechenwerk**: Durchführen von Rechnungen mit numerischen und logischen Werten
 - **Steuerwerk**: Interpretation des Programmcodes und Koordination aller Werke
-- **Speicherwerke**: Vorhalten von Nutzdaten und Programmcode gleichermaßen ohne konzeptionelle Trennung der beiden Arten von Informationen
+- **Speicherwerke**: Speichern von Informationen (sowohl Programmcode als auch Nutzdaten)
 - **Eingabewerk**: "logische Schnittstelle" zu Eingabegerät z.B. USB-Controller
 - **Ausgabewerk**: "logische Schnittstelle" für Ausgabegeräte z.B. Graka
+- **Bus-System**: Verbindet alle Komponenten und ermöglicht Datenaustausch
 
 **→ Unterschiede Aufbau**: Harvard-Architektur weißt klare Trennung von
 Programmcode und Nutzdaten auf, was bei der von-Neumann-Architektur gleich
@@ -113,7 +114,7 @@ gehalten wird
         <th>Harvard</th>
         <td>
             <ul>
-                <li>nahezu immun gegen absichtlichen Virenbefall</li>
+                <li>nahezu immun gegen unabsichtlichen Virenbefall</li>
                 <li>keine (unabsichtlichen oder ungewollten) Änderungen an der Betriebssoftware möglich</li>
                 <li>bessere Performance möglich durch gleichzeitigen Zugriff auf beide Speicherwerke</li>
             </ul>
@@ -458,6 +459,8 @@ Ein **Multiplexer** (Mux) ist ein Bauteil für Schaltungen, welches über 2^n Da
 Dabei wird der jeweilige Wert des Eingangs an den Ausgang weitergeleitet, welcher gerade durch den binärcodierten Wert über Steuereingänge aktiv geschaltet ist.
 
 ![](./assets/SCR-20231001-rdnd.png)
+
+- Wird zum Einsparen von Transistoren an den Speicherzellen eingesetzt.
 
 ---
 
