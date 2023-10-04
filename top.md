@@ -64,8 +64,6 @@ gehalten wird
     </tr>
 </table>
 
-> (2020, 2020n, 2021, 2022) Nennen Sie konkrete Anwendungsfaelle fur den Einsatz dieser beiden Architekturen bei heutigen "Rechnern"
-
 <table>
     <tr>
         <th>von-Neumann</th>
